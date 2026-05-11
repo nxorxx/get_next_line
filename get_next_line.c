@@ -6,7 +6,7 @@
 /*   By: dchernyk <dchernyk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/05 14:22:44 by dchernyk          #+#    #+#             */
-/*   Updated: 2026/05/11 16:53:50 by dchernyk         ###   ########.fr       */
+/*   Updated: 2026/05/11 19:28:50 by dchernyk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <unistd.h>
 #include <limits.h>
 
-int ft_strlen(const char *str)
+int	ft_strlen(const char *str)
 {
 	int	i;
 
@@ -86,86 +86,6 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (result);
 }
 
-char	*tilln(char *buffer)char	*tilln(char *buffer)
-{
-	int		n_pos;
-	int		i;
-	char	*result;
-
-	if (!ft_strchr(buffer, 10))
-		return (NULL);
-	n_pos = 0;
-	while (buffer[n_pos] != 10)
-		n_pos++;
-	result = malloc(n_pos + 2);
-	if (!result)
-		return (NULL);
-	result[n_pos + 1] = '\0';
-	result[n_pos] = '\n';
-	i = 0;
-	while (i < n_pos)
-	{
-		result[i] = buffer[i];
-		i++;	
-	}
-	return (result);
-}
-
-char	*aftern(char *buffer)
-{
-	int		n_pos;
-	int		end_pos;
-	int		i;
-	char	*result;
-
-	if (!ft_strchr(buffer, 10))
-		return (NULL);
-	n_pos = 0;
-	while (buffer[n_pos] != 10)
-		n_pos++;
-	end_pos = ft_strlen(buffer);
-	result = malloc(end_pos - n_pos + 1);
-	if (!result)
-		return (NULL)
-	result[end_pos - n_pos - 1] = '\0';
-	i = 0;
-	while (i + n_pos < end_pos)
-	{
-		result[i] = buffer[i + n_pos + 1];
-		i++;	
-	}
-	return (result);
-}
-
-char	*get_next_line(int fd)
-{
-	static char	*leftovers;
-	char		*line;
-	char		buffer[BUFFER_SIZE + 1];
-	int			bytes;
-
-	line = NULL;
-	if (ft_strchr(leftovers, 10))
-		line = ft_strjoin(line, aftern(leftovers));
-	while (1)
-	{
-		bytes = read(fd, buffer, BUFFER_SIZE);
-		if (bytes == -1)
-			return (NULL);
-		if (bytes == 0)
-			break ;
-		buffer[bytes] = '\0';
-		if (ft_strchr(buffer, 10))
-			break ;
-		line = ft_strjoin(line, buffer);
-	}
-	if (ft_strchr(buffer, 10))
-		line = ft_strjoin(line, tilln(buffer));
-	leftovers = ft_strjoin(NULL, buffer + 1);
-	leftovers[bytes] = '\0';
-	return (line);
-}
-
 char	*beforen(char *buffer)
 {
 	int		n_pos;
@@ -206,7 +126,7 @@ char	*aftern(char *buffer)
 	end_pos = ft_strlen(buffer);
 	result = malloc(end_pos - n_pos + 1);
 	if (!result)
-		return (NULL)
+		return (NULL);
 	result[end_pos - n_pos - 1] = '\0';
 	i = 0;
 	while (i + n_pos < end_pos)
@@ -215,7 +135,9 @@ char	*aftern(char *buffer)
 		i++;	
 	}
 	return (result);
-}
+} 000000\n1111111
+11111111
+000000\n
 
 char	*get_next_line(int fd)
 {
@@ -225,7 +147,7 @@ char	*get_next_line(int fd)
 	int			bytes;
 
 	line = NULL;
-	if (ft_strchr(buffer, 10))
+	if (leftovers && ft_strchr(leftovers, 10))
 		line = ft_strjoin(line, aftern(leftovers));
 	while (1)
 	{
@@ -245,7 +167,7 @@ char	*get_next_line(int fd)
 	leftovers[bytes] = '\0';
 	return (line);
 }
-int main(void)
+/*int main(void)
 {
 	int			file;
 
@@ -253,6 +175,9 @@ int main(void)
 	if (file == -1)
 		printf("\nNe dala nihuia");
 	printf("%s", get_next_line(file));
+	printf("%s", get_next_line(file));
+	printf("%s", get_next_line(file));
 	//	printf("%s", get_next_line(file));
 	
 }
+*/
