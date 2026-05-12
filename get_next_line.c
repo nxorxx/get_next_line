@@ -6,7 +6,7 @@
 /*   By: dchernyk <dchernyk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/05 14:22:44 by dchernyk          #+#    #+#             */
-/*   Updated: 2026/05/11 19:28:50 by dchernyk         ###   ########.fr       */
+/*   Updated: 2026/05/12 18:47:43 by dchernyk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,49 +135,84 @@ char	*aftern(char *buffer)
 		i++;	
 	}
 	return (result);
-} 000000\n1111111
-11111111
-000000\n
+}
 
-char	*get_next_line(int fd)
+int gnl_logic(int fd, char **line, char *buffer)
 {
-	static char	*leftovers;
-	char		*line;
-	char		buffer[BUFFER_SIZE + 1];
-	int			bytes;
-
-	line = NULL;
-	if (leftovers && ft_strchr(leftovers, 10))
-		line = ft_strjoin(line, aftern(leftovers));
+	int		bytes;
+	char	*temp;
 	while (1)
 	{
 		bytes = read(fd, buffer, BUFFER_SIZE);
 		if (bytes == -1)
-			return (NULL);
+			return (0);
 		if (bytes == 0)
 			break ;
 		buffer[bytes] = '\0';
 		if (ft_strchr(buffer, 10))
 			break ;
-		line = ft_strjoin(line, buffer);
+		temp = ft_strjoin(*line, buffer);
+		free(*line);
+		*line = temp;
 	}
+	return (bytes);
+}
+
+char	*get_next_line(int fd)
+{
+	static char	*leftovers;
+	char		*temp;
+	char		*line;
+	char		buffer[BUFFER_SIZE + 1];
+
+	line = NULL;
+	if (leftovers && ft_strchr(leftovers, 10))
+	{
+		line = beforen(leftovers);
+		temp = aftern(leftovers);
+		free(leftovers);
+		leftovers = temp;
+		return (line);
+	}
+	else if (leftovers)
+	{
+		line = ft_strjoin(line, leftovers);
+		free(leftovers);
+		leftovers = NULL;
+	}
+	gnl_logic(fd, &line, buffer);
 	if (ft_strchr(buffer, 10))
-		line = ft_strjoin(line, beforen(buffer));
-	leftovers = ft_strjoin(NULL, buffer + 1);
-	leftovers[bytes] = '\0';
+	{
+		temp = beforen(buffer);
+		//remember free
+		line = ft_strjoin (line, temp);
+		free(temp);
+		if (buffer[0] != '\n')
+			leftovers = aftern(buffer);
+		else
+			leftovers = NULL;
+	}
 	return (line);
 }
-/*int main(void)
+
+int main(void)
 {
+	char *c;
 	int			file;
 
-	file = open("test.txt", O_RDWR);
+	file = open("multiple_nl.txt", O_RDWR);
 	if (file == -1)
 		printf("\nNe dala nihuia");
-	printf("%s", get_next_line(file));
-	printf("%s", get_next_line(file));
-	printf("%s", get_next_line(file));
-	//	printf("%s", get_next_line(file));
-	
+	while (1)
+	{
+		c = get_next_line(file);
+		if(!c)
+			break;
+		printf("%s", c);
+	}
+	// printf("%s", get_next_line(file));
+	// printf("%s", get_next_line(file));
+	// printf("%s", get_next_line(file));
+	// printf("%s", get_next_line(file));
+	// printf("%s", get_next_line(file));
 }
-*/
