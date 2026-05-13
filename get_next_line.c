@@ -6,7 +6,7 @@
 /*   By: dchernyk <dchernyk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/05 14:22:44 by dchernyk          #+#    #+#             */
-/*   Updated: 2026/05/13 16:36:38 by dchernyk         ###   ########.fr       */
+/*   Updated: 2026/05/13 16:41:33 by dchernyk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ char	*get_next_line(int fd)
 	static char	*leftovers;
 	char		*temp;
 	char		*line;
-	char		*buffer;
+	char		buffer[BUFFER_SIZE + 1];
 
 	line = NULL;
 	if (leftovers && ft_strchr(leftovers, 10))
@@ -108,9 +108,6 @@ char	*get_next_line(int fd)
 		free(leftovers);
 		leftovers = NULL;
 	}
-	buffer = ft_calloc(BUFFER_SIZE + 1, 1);
-	if (!buffer)
-		return (NULL);
 	gnl_logic(fd, &line, buffer);
 	if (ft_strchr(buffer, 10))
 	{
@@ -119,7 +116,6 @@ char	*get_next_line(int fd)
 		line = ft_strjoin (line, temp);
 		free(temp);
 		temp = aftern(buffer);
-		free(buffer);
 		if (temp)
 			leftovers = temp;
 		else
