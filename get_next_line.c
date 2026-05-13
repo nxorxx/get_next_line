@@ -6,85 +6,11 @@
 /*   By: dchernyk <dchernyk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/05 14:22:44 by dchernyk          #+#    #+#             */
-/*   Updated: 2026/05/12 18:47:43 by dchernyk         ###   ########.fr       */
+/*   Updated: 2026/05/13 16:36:38 by dchernyk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <fcntl.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <limits.h>
-
-int	ft_strlen(const char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-		i++;
-	return (i);
-}
-
-void	*ft_memset(void *p, int c, size_t n)
-{
-	size_t		i;
-	char		*currentp;
-
-	currentp = p;
-	i = 0;
-	while (i < n)
-	{
-		currentp[i] = c;
-		i++;
-	}
-	return (p);
-}
-
-char	*ft_strchr(const char *s, int c)
-{
-	unsigned int	i;
-
-	i = 0;
-	while (s[i])
-	{
-		if (s[i] == (char)c)
-			return ((char *)s + i);
-		i++;
-	}
-	if (s[i] == (char)c)
-		return ((char *)s + i);
-	return (NULL);
-}
-
-char	*ft_strjoin(char const *s1, char const *s2)
-{
-	unsigned int	s1_len;
-	unsigned int	s2_len;
-	unsigned int	i;
-	unsigned int	ri;
-	char			*result;
-
-	if (!s1)
-		s1_len = 0;
-	else
-		s1_len = ft_strlen(s1);
-	s2_len = ft_strlen(s2);
-	if (!s2)
-		return (NULL);
-	result = malloc((s1_len + s2_len + 1) * sizeof(char));
-	if (!result)
-		return (NULL);
-	i = 0;
-	ri = 0;
-	while (i < s1_len)
-		result[ri++] = s1[i++];
-	i = 0;
-	while (i < s2_len)
-		result[ri++] = s2[i++];
-	result[ri] = '\0';
-	return (result);
-}
 
 char	*beforen(char *buffer)
 {
@@ -123,6 +49,8 @@ char	*aftern(char *buffer)
 	n_pos = 0;
 	while (buffer[n_pos] != 10)
 		n_pos++;
+	if (buffer[n_pos + 1] == '\0')
+		return (NULL);
 	end_pos = ft_strlen(buffer);
 	result = malloc(end_pos - n_pos + 1);
 	if (!result)
@@ -163,7 +91,7 @@ char	*get_next_line(int fd)
 	static char	*leftovers;
 	char		*temp;
 	char		*line;
-	char		buffer[BUFFER_SIZE + 1];
+	char		*buffer;
 
 	line = NULL;
 	if (leftovers && ft_strchr(leftovers, 10))
@@ -180,22 +108,28 @@ char	*get_next_line(int fd)
 		free(leftovers);
 		leftovers = NULL;
 	}
+	buffer = ft_calloc(BUFFER_SIZE + 1, 1);
+	if (!buffer)
+		return (NULL);
 	gnl_logic(fd, &line, buffer);
 	if (ft_strchr(buffer, 10))
 	{
 		temp = beforen(buffer);
-		//remember free
+		free(line);
 		line = ft_strjoin (line, temp);
 		free(temp);
-		if (buffer[0] != '\n')
-			leftovers = aftern(buffer);
+		temp = aftern(buffer);
+		free(buffer);
+		if (temp)
+			leftovers = temp;
 		else
 			leftovers = NULL;
+		temp = NULL;
 	}
 	return (line);
 }
 
-int main(void)
+/*int main(void)
 {
 	char *c;
 	int			file;
@@ -210,9 +144,4 @@ int main(void)
 			break;
 		printf("%s", c);
 	}
-	// printf("%s", get_next_line(file));
-	// printf("%s", get_next_line(file));
-	// printf("%s", get_next_line(file));
-	// printf("%s", get_next_line(file));
-	// printf("%s", get_next_line(file));
-}
+}*/
